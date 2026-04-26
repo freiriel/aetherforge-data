@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherForge | Data Sync</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --secondary: #4b0082;
+            --bg: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #e0e0e0;
+            --accent: #00f2ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Background Animated Glow */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            filter: blur(150px);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            opacity: 0.2;
+            animation: pulse 10s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--accent);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            word-break: break-all;
+            color: #fff;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px var(--primary);
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">AetherForge</div>
+        <div class="status">
+            <span class="status-dot"></span>
+            SYNC ONLINE
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Versão do Banco</div>
+                <div class="info-value" id="version">Carregando...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Integridade (MD5)</div>
+                <div class="info-value" id="hash">Carregando...</div>
+            </div>
+        </div>
+
+        <a href="aether_core.db" class="btn">Download Database</a>
+
+        <div class="footer">
+            Hot-Sync Engine v1.0 • Magic: The Gathering Assistant
+        </div>
+    </div>
+
+    <script>
+        fetch('aether_manifest.json')
+            .then(res => res.json())
+            .then(data => {
+                const date = new Date(data.version * 1000);
+                document.getElementById('version').innerText = date.toLocaleString('pt-BR');
+                document.getElementById('hash').innerText = data.db_md5;
+            })
+            .catch(err => {
+                document.getElementById('version').innerText = "Erro ao carregar";
+                document.getElementById('hash').innerText = "Verifique o manifesto";
+            });
+    </script>
+</body>
+</html>
